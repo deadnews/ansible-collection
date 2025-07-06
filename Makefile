@@ -1,4 +1,4 @@
-.PHONY: all clean default install lock update check pc lint test
+.PHONY: all clean default install lock update check pc lint test molecule
 
 default: check
 
@@ -26,6 +26,7 @@ lint:
 test:
 	uv run pytest -rP -p no:warnings -m ${DRIVER} --molecule ${DISCOVER}
 
+# make molecule ROLE=<role>
 molecule:
 	pushd roles/$(ROLE) && uv run molecule test -s $(ROLE); popd
 

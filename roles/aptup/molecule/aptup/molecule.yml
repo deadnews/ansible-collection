@@ -8,6 +8,7 @@ platforms:
 
 provisioner:
   name: ansible
-  env:
-    ANSIBLE_VERBOSITY: 0
-    ANSIBLE_STDOUT_CALLBACK: community.general.yaml
+  config_options:
+    defaults:
+      callback_result_format: yaml
+      verbosity: 0

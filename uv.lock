@@ -39,7 +39,7 @@ dev = [
     { name = "mypy", specifier = ">=1.15.0" },
     { name = "pytest", specifier = ">=8.4.1" },
     { name = "pytest-ansible", specifier = ">=25.6.2" },
-    { name = "ruff", specifier = ">=0.11.10" },
+    { name = "ruff", specifier = ">=0.12.2" },
 ]
 
 [[package]]

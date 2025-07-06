@@ -18,7 +18,7 @@ dev = [
   "mypy>=1.15.0",
   "pytest-ansible>=25.6.2",
   "pytest>=8.4.1",
-  "ruff>=0.11.10",
+  "ruff>=0.12.2",
 ]
 
 [tool.ruff]
