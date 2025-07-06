@@ -1,45 +1,47 @@
-.PHONY: all clean default install lock update checks pc lint test
+.PHONY: all clean default install lock update check pc lint test
 
-default: checks
+default: check
 
 install:
 	pre-commit install
-	poetry sync --no-root
-	poetry run ansible-galaxy install -r requirements.yml
-
-lock:
-	poetry lock
+	uv sync
+	uv run ansible-galaxy install -r requirements.yml
 
 update:
-	poetry up --latest
-	poetry run galaxy-update requirements.yml
+	uv sync --upgrade
+	uv run galaxy-update requirements.yml
 
-checks: pc lint-py
+check: pc lint-py
 pc:
 	pre-commit run -a
 lint-py:
-	poetry run poe lint
+	uv run ruff check .
+	uv run ruff format .
+	uv run mypy .
 
 lint:
-	poetry run ansible-lint
+	uv run ansible-lint
 
-test-%:
-	pushd roles/$* && poetry run molecule test -s $*; popd
+# make test DRIVER=docker DISCOVER=roles/
+test:
+	pytest -rP -p no:warnings -m ${DRIVER:-docker} --molecule ${DISCOVER}
 
-test-vg-%:
-	pushd roles/$* && poetry run molecule test -s $*_vagrant; popd
+molecule:
+	pushd roles/$(ROLE) && uv run molecule test -s $(ROLE); popd
+
+# make molecule-vg ROLE=<role>
+molecule-vg:
+	pushd roles/$(ROLE) && uv run molecule test -s $(ROLE)_vagrant; popd
 
 bumped:
 	git cliff --bumped-version
 
-# make release-tag_name
-# make release-$(git cliff --bumped-version)-alpha.0
-release-%: checks
-	git cliff -o CHANGELOG.md --tag $*
+# make release TAG=$(git cliff --bumped-version)-alpha.0
+release: check
+	git cliff -o CHANGELOG.md --tag $(TAG)
 	pre-commit run --files CHANGELOG.md || pre-commit run --files CHANGELOG.md
 	git add CHANGELOG.md
-	git commit -m "chore(release): prepare for $*"
+	git commit -m "chore(release): prepare for $(TAG)"
 	git push
-	git tag -a $* -m "chore(release): $*"
-	git push origin $*
-	git tag --verify $*
+	git tag -a $(TAG) -m "chore(release): $(TAG)"
+	git push origin $(TAG)

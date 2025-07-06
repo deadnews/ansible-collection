@@ -3,8 +3,7 @@ name: Main
 on:
   push:
     branches: [main]
-    tags:
-      - "v*"
+    tags: [v*.*.*]
   pull_request:
     branches: [main]
 
@@ -24,18 +23,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install poetry
-        run: pipx install poetry
-
-      - uses: actions/setup-python@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@bd01e18f51369d5a26f1651c3cb451d3417e3bba # v6.3.1
         with:
-          cache: poetry
+          enable-cache: true
 
-      - name: Install deps
-        run: poetry install --no-root
+      - name: Install project
+        run: uv sync --frozen
 
       - name: Lint code
-        run: poetry run poe lint
+        run: make lint-py
 
   lint:
     name: Lint Ansible code
@@ -50,22 +47,20 @@ jobs:
           key: reqs-${{ runner.os }}-${{ hashFiles('requirements.yml') }}
           path: ${{ env.ANSIBLE_COLLECTIONS_PATH }}
 
-      - name: Install poetry
-        run: pipx install poetry
-
-      - uses: actions/setup-python@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@bd01e18f51369d5a26f1651c3cb451d3417e3bba # v6.3.1
         with:
-          cache: poetry
+          enable-cache: true
 
-      - name: Install deps
-        run: poetry install --no-root
+      - name: Install project
+        run: uv sync --frozen
 
       - name: Install requirements
         if: steps.cache-reqs.outputs.cache-hit != 'true'
-        run: poetry run ansible-galaxy install -r requirements.yml
+        run: uv run ansible-galaxy install -r requirements.yml
 
       - name: Lint code
-        run: poetry run ansible-lint
+        run: uv run ansible-lint
 
   changes:
     name: Detect changed scenarios
@@ -96,7 +91,7 @@ jobs:
 
           echo "changes=$JSON" >> $GITHUB_OUTPUT
 
-  tests:
+  test:
     name: Tests
     needs: [changes]
     strategy:
@@ -115,29 +110,27 @@ jobs:
           key: reqs-${{ runner.os }}-${{ hashFiles('requirements.yml') }}
           path: ${{ env.ANSIBLE_COLLECTIONS_PATH }}
 
-      - name: Install poetry
-        run: pipx install poetry
-
-      - uses: actions/setup-python@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@bd01e18f51369d5a26f1651c3cb451d3417e3bba # v6.3.1
         with:
-          cache: poetry
+          enable-cache: true
 
-      - name: Install deps
-        run: poetry install --no-root
+      - name: Install project
+        run: uv sync --frozen
 
       - name: Install requirements
         if: steps.cache-reqs.outputs.cache-hit != 'true'
-        run: poetry run ansible-galaxy install -r requirements.yml
+        run: uv run ansible-galaxy install -r requirements.yml
 
       - name: Run tests
-        run: poetry run poe test --discover ${{ matrix.molecule-discover }}
+        run: make test DISCOVER=${{ matrix.molecule-discover }}
         env:
           MOLECULE_DISTRO: ${{ matrix.molecule-distro }}
 
   galaxy-deploy:
     name: Release to Ansible Galaxy
     if: github.ref_type == 'tag'
-    needs: [lint-py, lint, tests]
+    needs: [lint-py, lint, test]
     environment:
       name: galaxy
       url: https://galaxy.ansible.com/ui/repo/published/deadnews/util
@@ -157,7 +150,7 @@ jobs:
   github-deploy:
     name: Release to GitHub
     if: github.ref_type == 'tag'
-    needs: [lint-py, lint, tests]
+    needs: [lint-py, lint, test]
     environment: github-releases
     permissions:
       contents: write

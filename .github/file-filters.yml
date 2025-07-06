@@ -3,7 +3,7 @@
 
 shared: &shared
   - molecule/**
-  - poetry.lock
+  - uv.lock
   - requirements.yml
   - tests/test_integration.py
 

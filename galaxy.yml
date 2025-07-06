@@ -11,7 +11,7 @@ license_file: LICENSE
 tags:
   - linux
   - tools
-repository: https://github.com/DeadNews/ansible-collection-util
+repository: https://github.com/deadnews/ansible-collection-util
 
 dependencies:
   community.docker: ">=3.8.1"
