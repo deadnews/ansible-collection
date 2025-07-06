@@ -123,7 +123,7 @@ jobs:
         run: uv run ansible-galaxy install -r requirements.yml
 
       - name: Run tests
-        run: make test DISCOVER=${{ matrix.molecule-discover }}
+        run: make test DRIVER=docker DISCOVER=${{ matrix.molecule-discover }}
         env:
           MOLECULE_DISTRO: ${{ matrix.molecule-distro }}
 

@@ -24,7 +24,7 @@ lint:
 
 # make test DRIVER=docker DISCOVER=roles/
 test:
-	pytest -rP -p no:warnings -m ${DRIVER:-docker} --molecule ${DISCOVER}
+	pytest -rP -p no:warnings -m ${DRIVER} --molecule ${DISCOVER}
 
 molecule:
 	pushd roles/$(ROLE) && uv run molecule test -s $(ROLE); popd
