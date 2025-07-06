@@ -1,13 +1,23 @@
 ---
 exclude_paths:
+  - .ansible/
   - .cache/
+  - .deprecated/
+  - .facts_cache/
   - .github/
+  - .mypy_cache/
   - .pre-commit-config.yaml
+  - .pre-commit/
   - .prettierrc.yaml
+  - .pytest_cache/
+  - .ruff_cache/
+  - .venv/
+  - .vscode/
+  - docker-compose.yml
   - plugins/modules # error on documentation
 
 skip_list:
   - name[play]
   - package-latest
   - yaml[indentation]
-  - galaxy[no-changelog]
+  - yaml[empty-lines]
