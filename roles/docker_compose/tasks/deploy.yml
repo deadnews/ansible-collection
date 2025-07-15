@@ -60,6 +60,17 @@
           ansible.builtin.debug:
             var: ls_output.stdout
 
+- name: Inspect images for containers before pull
+  when:
+    - docker_compose_containers_check is defined
+    - docker_compose_containers_check
+  ansible.builtin.command:
+    cmd: docker inspect -f {%raw%}'{{.Config.Image}}'{%endraw%} {{ item }}
+  loop: "{{ docker_compose_containers_check }}"
+  register: images_before
+  changed_when: false
+  failed_when: false
+
 - name: Pull images for the Docker Compose project {{ docker_compose_project }}
   community.docker.docker_compose_v2_pull:
     project_src: "{{ docker_compose_target_dir }}/{{ docker_compose_project }}"
@@ -182,3 +193,25 @@
       loop: "{{ healthy_verify.results }}"
       loop_control:
         label: "{{ item.item }}"
+
+- name: Inspect images for containers after pull
+  when:
+    - docker_compose_containers_check is defined
+    - docker_compose_containers_check
+  block:
+    - name: Inspect images for containers after pull
+      ansible.builtin.command:
+        cmd: docker inspect -f {%raw%}'{{.Config.Image}}'{%endraw%} {{ item }}
+      loop: "{{ docker_compose_containers_check }}"
+      register: images_after
+      changed_when: false
+
+    - name: Show Docker image version changes
+      ansible.builtin.debug:
+        msg: |
+          {% for idx in range(docker_compose_containers_check | length) %}
+          Container: {{ docker_compose_containers_check[idx] }}
+          Old Image: {{ images_before.results[idx].stdout if images_before.results[idx].rc == 0 else 'None' }}
+          New Image: {{ images_after.results[idx].stdout }}
+          ---
+          {% endfor %}

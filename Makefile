@@ -3,7 +3,6 @@
 default: check
 
 install:
-	pre-commit install
 	uv sync
 	uv run ansible-galaxy install -r requirements.yml
 

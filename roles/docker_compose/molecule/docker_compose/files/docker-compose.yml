@@ -1,16 +1,16 @@
 ---
 services:
   docker_app:
-    image: ghcr.io/deadnews/deadnews-template-python:2.0.11@sha256:70b53f610278f4d6e3306db3b311b68325cca027592585893833fd493fdcdf27
+    image: ghcr.io/deadnews/deadnews-template-go:2.0.6@sha256:981178cb36eababcbaf8209d5ff19c9cb01c107ec478dd3128ab597c8e12be94
     container_name: docker-app
     restart: on-failure:2
     healthcheck:
-      test: wget --no-verbose --tries=1 --spider http://127.0.0.1:${UVICORN_PORT}/health || exit 1
+      test: wget --no-verbose --tries=1 --spider http://127.0.0.1:${SERVICE_PORT}/health || exit 1
       interval: 60s
       retries: 3
       timeout: 10s
       start_period: 60s
     ports:
-      - 127.0.0.1:${UVICORN_PORT}:${UVICORN_PORT}
+      - 127.0.0.1:${SERVICE_PORT}:${SERVICE_PORT}
     environment:
-      UVICORN_PORT: ${UVICORN_PORT}
+      SERVICE_PORT: ${SERVICE_PORT}
