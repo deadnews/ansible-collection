@@ -1,13 +1,11 @@
 # Changelog
 
-## [1.8.0-alpha.0](https://github.com/DeadNews/ansible-collection-util/compare/v1.7.3...v1.8.0-alpha.0) - 2025-07-06
+## [1.8.0](https://github.com/DeadNews/ansible-collection-util/compare/v1.7.3...v1.8.0) - 2025-07-15
 
 ### 🚀 Features
 
-- migrate from `poetry` to `uv` - ([b8fb9ec](https://github.com/DeadNews/ansible-collection-util/commit/b8fb9ecc0b755f1c20ad4a0a5f47a67bc14a5de2))
-- migrate from `poetry` to `uv` - ([f233e8b](https://github.com/DeadNews/ansible-collection-util/commit/f233e8b4aa18fcb771bcf31316f3e6744714f6f5))
-- migrate from `poetry` to `uv` - ([4b17aa5](https://github.com/DeadNews/ansible-collection-util/commit/4b17aa570fe4d8fdced6fecb1d86ace1d8ebb4b8))
-- migrate from `poetry` to `uv` - ([d2cd19e](https://github.com/DeadNews/ansible-collection-util/commit/d2cd19ec67d658f9b4957eaf83edbd9b499fea51))
+- _(docker_compose)_ add image version inspection before and after pulling containers ([#103](https://github.com/deadnews/ansible-collection-util/issues/103)) - ([a53159f](https://github.com/DeadNews/ansible-collection-util/commit/a53159f13273a6008af69f4c2815e07469d22125))
+- migrate from `poetry` to `uv` ([#101](https://github.com/deadnews/ansible-collection-util/issues/101)) - ([390f142](https://github.com/DeadNews/ansible-collection-util/commit/390f1421fbd18deb33b223490c9b0967864faf4a))
 
 ## [1.7.3](https://github.com/DeadNews/ansible-collection-util/compare/v1.7.2...v1.7.3) - 2025-05-22
 
