@@ -99,6 +99,7 @@ argument_specs:
         description: |
           A list of container names to assert are running after the Docker Compose project is deployed.
           If containers health checks are defined, they will be used to determine if the container is healthy.
+          Also used to image version inspection before and after pulling containers.
 
       docker_compose_containers_check_retries:
         type: int
