@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.8.1](https://github.com/DeadNews/ansible-collection-util/compare/v1.8.0...v1.8.1) - 2025-07-23
+
+### 🐛 Bug fixes
+
+- _(docker)_ update cleanup frequency ([#104](https://github.com/deadnews/ansible-collection-util/issues/104)) - ([0f30edc](https://github.com/DeadNews/ansible-collection-util/commit/0f30edc5d8adf1872a56fc7aea3572c41bfe35eb))
+
 ## [1.8.0](https://github.com/DeadNews/ansible-collection-util/compare/v1.7.3...v1.8.0) - 2025-07-15
 
 ### 🚀 Features
