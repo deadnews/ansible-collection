@@ -92,11 +92,11 @@
     var: compose_up.stderr
 
 - name: Sleep for a specified time
-  ansible.builtin.wait_for:
-    timeout: "{{ docker_compose_sleep_time }}"
   when:
     - docker_compose_sleep_time is defined
-    - docker_compose_sleep_time
+    - docker_compose_sleep_time > 0
+  ansible.builtin.wait_for:
+    timeout: "{{ docker_compose_sleep_time }}"
 
 - name: Show Docker Compose logs
   when:
@@ -115,9 +115,7 @@
         var: compose_logs.stdout
 
 - name: Execute command in running Docker containers
-  when:
-    - docker_compose_containers_exec is defined
-    - docker_compose_containers_exec
+  when: docker_compose_containers_exec is defined
   block:
     - name: Execute command in Docker containers
       community.docker.docker_container_exec:
@@ -138,9 +136,7 @@
         label: "{{ item.item.container }} - {{ item.item.cmd }}"
 
 - name: Show Docker containers logs
-  when:
-    - docker_compose_containers_logs is defined
-    - docker_compose_containers_logs
+  when: docker_compose_containers_logs is defined
   block:
     - name: Get Docker containers logs
       ansible.builtin.command:
