@@ -18,7 +18,6 @@
       ansible.builtin.apt:
         name: iptables
         state: present
-        cache_valid_time: 7200 # 2h
 
     - name: Setup Wireguard server
       ansible.builtin.include_role:
