@@ -33,10 +33,10 @@ argument_specs:
       docker_cleanup_scheduled_until:
         type: str
         required: false
-        default: 672h # 28 days
+        default: 168h # 7 days
         description: |
           Specifies the duration after which unused Docker images are considered for cleanup.
-          Images created more than this duration ago will be pruned.
+          Unused images created more than this duration ago will be pruned.
 
       docker_hold_packages:
         type: bool
