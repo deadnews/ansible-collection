@@ -61,9 +61,7 @@
             var: ls_output.stdout
 
 - name: Inspect images for containers before pull
-  when:
-    - docker_compose_containers_check is defined
-    - docker_compose_containers_check
+  when: docker_compose_containers_check is defined
   ansible.builtin.command:
     cmd: docker inspect -f {%raw%}'{{.Config.Image}}'{%endraw%} {{ item }}
   loop: "{{ docker_compose_containers_check }}"
@@ -94,11 +92,11 @@
     var: compose_up.stderr
 
 - name: Sleep for a specified time
-  ansible.builtin.wait_for:
-    timeout: "{{ docker_compose_sleep_time }}"
   when:
     - docker_compose_sleep_time is defined
-    - docker_compose_sleep_time
+    - docker_compose_sleep_time > 0
+  ansible.builtin.wait_for:
+    timeout: "{{ docker_compose_sleep_time }}"
 
 - name: Show Docker Compose logs
   when:
@@ -117,9 +115,7 @@
         var: compose_logs.stdout
 
 - name: Execute command in running Docker containers
-  when:
-    - docker_compose_containers_exec is defined
-    - docker_compose_containers_exec
+  when: docker_compose_containers_exec is defined
   block:
     - name: Execute command in Docker containers
       community.docker.docker_container_exec:
@@ -140,9 +136,7 @@
         label: "{{ item.item.container }} - {{ item.item.cmd }}"
 
 - name: Show Docker containers logs
-  when:
-    - docker_compose_containers_logs is defined
-    - docker_compose_containers_logs
+  when: docker_compose_containers_logs is defined
   block:
     - name: Get Docker containers logs
       ansible.builtin.command:
@@ -161,9 +155,7 @@
         label: "{{ item.item }}"
 
 - name: Ensure that Docker containers are running and healthy
-  when:
-    - docker_compose_containers_check is defined
-    - docker_compose_containers_check
+  when: docker_compose_containers_check is defined
   block:
     - name: Ensure that Docker container is running ー {{ docker_compose_project }}
       ansible.builtin.command:
@@ -195,9 +187,7 @@
         label: "{{ item.item }}"
 
 - name: Inspect images for containers after pull
-  when:
-    - docker_compose_containers_check is defined
-    - docker_compose_containers_check
+  when: docker_compose_containers_check is defined
   block:
     - name: Inspect images for containers after pull
       ansible.builtin.command:

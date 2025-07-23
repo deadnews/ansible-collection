@@ -10,6 +10,9 @@ vault.key
 # Symlink for pytest
 collections/
 
+# environments
+.venv
+
 # vagrant
 .vagrant
 

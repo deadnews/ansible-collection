@@ -14,7 +14,6 @@
   ansible.builtin.apt:
     name: wireguard
     state: present
-    cache_valid_time: 7200 # 2h
 
 - name: Install Wireguard — Arch Linux
   when: ansible_os_family == 'Archlinux'
