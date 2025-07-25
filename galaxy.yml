@@ -11,7 +11,7 @@ license_file: LICENSE
 tags:
   - linux
   - tools
-repository: https://github.com/deadnews/ansible-collection-util
+repository: https://github.com/deadnews/ansible-collection
 
 dependencies:
   community.docker: ">=3.8.1"
@@ -21,5 +21,8 @@ build_ignore:
   - .ansible
   - .facts_cache
   - .github
+  - .mypy_cache
   - .pytest_cache
+  - .ruff_cache
+  - .venv
   - .vscode

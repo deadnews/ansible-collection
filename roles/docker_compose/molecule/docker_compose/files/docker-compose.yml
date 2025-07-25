@@ -1,7 +1,7 @@
 ---
 services:
   docker_app:
-    image: ghcr.io/deadnews/deadnews-template-python:2.0.11@sha256:70b53f610278f4d6e3306db3b311b68325cca027592585893833fd493fdcdf27
+    image: ghcr.io/deadnews/deadnews-template-python:2.1.0@sha256:349913e4f97a98d10232fbc5057174a4d3ffc70d88c4ab83fc45e085685ee9c6
     container_name: docker-app
     restart: on-failure:2
     healthcheck:

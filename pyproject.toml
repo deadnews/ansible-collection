@@ -1,6 +1,6 @@
 [project]
-name            = "ansible-collection-util"
-description     = "Ansible Utils Collection"
+name            = "ansible-collection"
+description     = "Ansible Collection"
 version         = "0.0.0"
 readme          = "README.md"
 license         = "MIT"
