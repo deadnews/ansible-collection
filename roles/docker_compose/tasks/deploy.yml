@@ -39,7 +39,7 @@
       ansible.builtin.command:
         cmd: docker compose -f "{{ docker_compose_target_dir }}/{{ docker_compose_project }}/docker-compose.yml" config
       changed_when: false
-      register: config_output
+      register: docker_compose_config_output
 
     - name: Show files in the Docker Compose project {{ docker_compose_project }}
       when:
@@ -48,24 +48,24 @@
       block:
         - name: Show the Docker Compose project in canonical format
           ansible.builtin.debug:
-            var: config_output.stdout
+            var: docker_compose_config_output.stdout
 
         - name: List files in the Docker Compose project {{ docker_compose_project }}
           ansible.builtin.command:
             cmd: ls -lha "{{ docker_compose_target_dir }}/{{ docker_compose_project }}"
           changed_when: false
-          register: ls_output
+          register: docker_compose_ls_output
 
         - name: Show files in the Docker Compose project {{ docker_compose_project }}
           ansible.builtin.debug:
-            var: ls_output.stdout
+            var: docker_compose_ls_output.stdout
 
 - name: Inspect images for containers before pull
   when: docker_compose_containers_check is defined
   ansible.builtin.command:
     cmd: docker inspect -f {%raw%}'{{.Config.Image}}'{%endraw%} {{ item }}
   loop: "{{ docker_compose_containers_check }}"
-  register: images_before
+  register: docker_compose_images_before
   changed_when: false
   failed_when: false
 
@@ -85,11 +85,11 @@
     pull: never
     recreate: auto
     state: present
-  register: compose_up
+  register: docker_compose_compose_up
 
 - name: Show results for docker compose up ー {{ docker_compose_project }}
   ansible.builtin.debug:
-    var: compose_up.stderr
+    var: docker_compose_compose_up.stderr
 
 - name: Sleep for a specified time
   when:
@@ -108,11 +108,11 @@
         cmd: docker compose logs
         chdir: "{{ docker_compose_target_dir }}/{{ docker_compose_project }}"
       changed_when: false
-      register: compose_logs
+      register: docker_compose_compose_logs
 
     - name: Show Docker compose logs
       ansible.builtin.debug:
-        var: compose_logs.stdout
+        var: docker_compose_compose_logs.stdout
 
 - name: Execute command in running Docker containers
   when: docker_compose_containers_exec is defined
@@ -122,7 +122,7 @@
         container: "{{ item.container }}"
         command: "{{ item.cmd }}"
       changed_when: false
-      register: containers_exec
+      register: docker_compose_containers_exec
       loop: "{{ docker_compose_containers_exec }}"
 
     - name: Show exec results ー {{ docker_compose_project }}
@@ -131,7 +131,7 @@
           rc: "{{ item.rc }}"
           stderr: "{{ item.stderr }}"
           stdout: "{{ item.stdout }}"
-      loop: "{{ containers_exec.results }}"
+      loop: "{{ docker_compose_containers_exec.results }}"
       loop_control:
         label: "{{ item.item.container }} - {{ item.item.cmd }}"
 
@@ -142,7 +142,7 @@
       ansible.builtin.command:
         cmd: docker logs {{ item }}
       changed_when: false
-      register: containers_logs
+      register: docker_compose_containers_logs
       loop: "{{ docker_compose_containers_logs }}"
 
     - name: Show Docker containers logs ー {{ docker_compose_project }}
@@ -150,7 +150,7 @@
         msg:
           stderr: "{{ item.stderr }}"
           stdout: "{{ item.stdout }}"
-      loop: "{{ containers_logs.results }}"
+      loop: "{{ docker_compose_containers_logs.results }}"
       loop_control:
         label: "{{ item.item }}"
 
@@ -161,28 +161,28 @@
       ansible.builtin.command:
         cmd: docker inspect -f {%raw%}'{{.State.Running}}'{%endraw%} {{ item }}
       changed_when: false
-      register: running_verify
+      register: docker_compose_running_verify
       retries: 12
       delay: 5
-      until: running_verify.stdout == 'true'
+      until: docker_compose_running_verify.stdout == 'true'
       loop: "{{ docker_compose_containers_check }}"
 
     - name: Ensure that Docker container is healthy ー {{ docker_compose_project }}
       ansible.builtin.command:
         cmd: docker inspect -f {%raw%}'{{if .State.Health}}{{.State.Health.Status}}{{else}}no health check{{end}}'{%endraw%} {{ item }}
       changed_when: false
-      register: healthy_verify
+      register: docker_compose_healthy_verify
       retries: "{{ docker_compose_containers_check_retries | default(24) }}"
       delay: 5
       until: >-
-        healthy_verify.stdout == 'healthy' or
-        healthy_verify.stdout == 'no health check'
+        docker_compose_healthy_verify.stdout == 'healthy' or
+        docker_compose_healthy_verify.stdout == 'no health check'
       loop: "{{ docker_compose_containers_check }}"
 
     - name: Show container health status ー {{ docker_compose_project }}
       ansible.builtin.debug:
         msg: "{{ item.stdout }}"
-      loop: "{{ healthy_verify.results }}"
+      loop: "{{ docker_compose_healthy_verify.results }}"
       loop_control:
         label: "{{ item.item }}"
 
@@ -193,15 +193,9 @@
       ansible.builtin.command:
         cmd: docker inspect -f {%raw%}'{{.Config.Image}}'{%endraw%} {{ item }}
       loop: "{{ docker_compose_containers_check }}"
-      register: images_after
+      register: docker_compose_images_after
       changed_when: false
 
     - name: Show Docker image version changes
       ansible.builtin.debug:
-        msg: |
-          {% for idx in range(docker_compose_containers_check | length) %}
-          Container: {{ docker_compose_containers_check[idx] }}
-          Old Image: {{ images_before.results[idx].stdout if images_before.results[idx].rc == 0 else 'None' }}
-          New Image: {{ images_after.results[idx].stdout }}
-          ---
-          {% endfor %}
+        var: docker_compose_images_after.stdout
