@@ -3,9 +3,7 @@
 
 - name: Check distribution compatibility
   ansible.builtin.assert:
-    that:
-      - ansible_os_family is defined
-      - ansible_os_family == 'Debian'
+    that: ansible_os_family == 'Debian'
 
 - name: Upgrade Debian-based OS
   ansible.builtin.import_role:

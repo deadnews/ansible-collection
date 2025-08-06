@@ -2,51 +2,46 @@
 # Replace the codename to next LTS version
 
 - name: Replace the codename — Debian 10 to 11
+  when:
+    - ansible_distribution == 'Debian'
+    - ansible_lsb.major_release | int == 10
   ansible.builtin.replace:
     path: /etc/apt/sources.list
     regexp: buster
     replace: bullseye
-  when:
-    - ansible_distribution is defined
-    - ansible_distribution == 'Debian'
-    - ansible_lsb.major_release | int == 10
 
 - name: Replace the codename — Debian 11 to 12
+  when:
+    - ansible_distribution == 'Debian'
+    - ansible_lsb.major_release | int == 11
   ansible.builtin.replace:
     path: /etc/apt/sources.list
     regexp: bullseye
     replace: bookworm
-  when:
-    - ansible_distribution is defined
-    - ansible_distribution == 'Debian'
-    - ansible_lsb.major_release | int == 11
 
 - name: Replace the codename — Ubuntu 18 to 20
+  when:
+    - ansible_distribution == 'Ubuntu'
+    - ansible_lsb.major_release | int == 18
   ansible.builtin.replace:
     path: /etc/apt/sources.list
     regexp: bionic
     replace: focal
-  when:
-    - ansible_distribution is defined
-    - ansible_distribution == 'Ubuntu'
-    - ansible_lsb.major_release | int == 18
 
 - name: Replace the codename — Ubuntu 20 to 22
+  when:
+    - ansible_distribution == 'Ubuntu'
+    - ansible_lsb.major_release | int == 20
   ansible.builtin.replace:
     path: /etc/apt/sources.list
     regexp: focal
     replace: jammy
-  when:
-    - ansible_distribution is defined
-    - ansible_distribution == 'Ubuntu'
-    - ansible_lsb.major_release | int == 20
 
 - name: Replace the codename — Ubuntu 22 to 24
+  when:
+    - ansible_distribution == 'Ubuntu'
+    - ansible_lsb.major_release | int == 22
   ansible.builtin.replace:
     path: /etc/apt/sources.list
     regexp: jammy
     replace: noble
-  when:
-    - ansible_distribution is defined
-    - ansible_distribution == 'Ubuntu'
-    - ansible_lsb.major_release | int == 22
