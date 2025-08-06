@@ -8,7 +8,7 @@
     mode: "0700"
 
 - name: Create files in the Docker Compose project {{ docker_compose_project }}
-  when: docker_compose_files is defined
+  when: docker_compose_files | default([]) | length > 0
   block:
     - name: Template files in the Docker Compose project {{ docker_compose_project }}
       ansible.builtin.template:
@@ -42,9 +42,7 @@
       register: docker_compose_config_output
 
     - name: Show files in the Docker Compose project {{ docker_compose_project }}
-      when:
-        - docker_compose_files_show is defined
-        - docker_compose_files_show
+      when: docker_compose_files_show | default(false)
       block:
         - name: Show the Docker Compose project in canonical format
           ansible.builtin.debug:
@@ -61,7 +59,7 @@
             var: docker_compose_ls_output.stdout
 
 - name: Inspect images for containers before pull
-  when: docker_compose_containers_check is defined
+  when: docker_compose_containers_check | default([]) | length > 0
   ansible.builtin.command:
     cmd: docker inspect -f {%raw%}'{{.Config.Image}}'{%endraw%} {{ item }}
   loop: "{{ docker_compose_containers_check }}"
@@ -92,16 +90,12 @@
     var: docker_compose_compose_up.stderr
 
 - name: Sleep for a specified time
-  when:
-    - docker_compose_sleep_time is defined
-    - docker_compose_sleep_time > 0
+  when: docker_compose_sleep_time | default(0) | int > 0
   ansible.builtin.wait_for:
     timeout: "{{ docker_compose_sleep_time }}"
 
 - name: Show Docker Compose logs
-  when:
-    - docker_compose_logs is defined
-    - docker_compose_logs
+  when: docker_compose_logs | default(false)
   block:
     - name: Get Docker Compose logs
       ansible.builtin.command:
@@ -115,14 +109,14 @@
         var: docker_compose_compose_logs.stdout
 
 - name: Execute command in running Docker containers
-  when: docker_compose_containers_exec is defined
+  when: docker_compose_containers_exec | default([]) | length > 0
   block:
     - name: Execute command in Docker containers
       community.docker.docker_container_exec:
         container: "{{ item.container }}"
         command: "{{ item.cmd }}"
       changed_when: false
-      register: docker_compose_containers_exec
+      register: docker_compose_containers_exec_output
       loop: "{{ docker_compose_containers_exec }}"
 
     - name: Show exec results ー {{ docker_compose_project }}
@@ -131,18 +125,18 @@
           rc: "{{ item.rc }}"
           stderr: "{{ item.stderr }}"
           stdout: "{{ item.stdout }}"
-      loop: "{{ docker_compose_containers_exec.results }}"
+      loop: "{{ docker_compose_containers_exec_output.results }}"
       loop_control:
         label: "{{ item.item.container }} - {{ item.item.cmd }}"
 
 - name: Show Docker containers logs
-  when: docker_compose_containers_logs is defined
+  when: docker_compose_containers_logs | default([]) | length > 0
   block:
     - name: Get Docker containers logs
       ansible.builtin.command:
         cmd: docker logs {{ item }}
       changed_when: false
-      register: docker_compose_containers_logs
+      register: docker_compose_containers_logs_output
       loop: "{{ docker_compose_containers_logs }}"
 
     - name: Show Docker containers logs ー {{ docker_compose_project }}
@@ -150,12 +144,12 @@
         msg:
           stderr: "{{ item.stderr }}"
           stdout: "{{ item.stdout }}"
-      loop: "{{ docker_compose_containers_logs.results }}"
+      loop: "{{ docker_compose_containers_logs_output.results }}"
       loop_control:
         label: "{{ item.item }}"
 
 - name: Ensure that Docker containers are running and healthy
-  when: docker_compose_containers_check is defined
+  when: docker_compose_containers_check | default([]) | length > 0
   block:
     - name: Ensure that Docker container is running ー {{ docker_compose_project }}
       ansible.builtin.command:
@@ -187,7 +181,7 @@
         label: "{{ item.item }}"
 
 - name: Inspect images for containers after pull
-  when: docker_compose_containers_check is defined
+  when: docker_compose_containers_check | default([]) | length > 0
   block:
     - name: Inspect images for containers after pull
       ansible.builtin.command:
@@ -196,6 +190,22 @@
       register: docker_compose_images_after
       changed_when: false
 
+    - name: Set image changed flag
+      ansible.builtin.set_fact:
+        docker_compose_image_changed: >-
+          {{
+            (docker_compose_images_before.results | map(attribute='stdout') | list)
+            !=
+            (docker_compose_images_after.results | map(attribute='stdout') | list)
+          }}
+
     - name: Show Docker image version changes
+      changed_when: docker_compose_image_changed
       ansible.builtin.debug:
-        var: docker_compose_images_after.stdout
+        msg: |
+          {% for idx in range(docker_compose_containers_check | length) %}
+          Container: {{ docker_compose_containers_check[idx] }}
+          Old Image: {{ docker_compose_images_before.results[idx].stdout if docker_compose_images_before.results[idx].rc == 0 else 'None' }}
+          New Image: {{ docker_compose_images_after.results[idx].stdout }}
+          ---
+          {% endfor %}

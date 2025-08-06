@@ -7,7 +7,7 @@
     docker_user_home: "{{ docker_rootless_user_home if docker_rootless else '/root' }}"
 
 - name: Create the Docker config.json. The config only applies to new containers.
-  when: docker_config is defined
+  when: docker_config | default('') | length > 0
   block:
     - name: Create directory for the Docker config.json
       ansible.builtin.file:
@@ -32,7 +32,7 @@
         - not docker_config.endswith('.j2')
 
 - name: Create the Docker daemon.json
-  when: docker_config_daemon is defined
+  when: docker_config_daemon | default('') | length > 0
   block:
     - name: Set Docker daemon.json directory
       ansible.builtin.set_fact:
@@ -65,8 +65,7 @@
         - not docker_config_daemon.endswith('.j2')
 
 - name: Create the Docker systemd service config
-  when:
-    - docker_config_systemd is defined
+  when: docker_config_systemd | default(false)
   block:
     - name: Set the Docker systemd service config directory
       ansible.builtin.set_fact:
