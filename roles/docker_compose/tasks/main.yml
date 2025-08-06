@@ -1,12 +1,12 @@
 ---
 # Deploy Docker Compose projects
 
-- name: Check docker_compose_files is a non-empty list when docker_compose_state is present
+- name: Check if docker_compose_files is defined when docker_compose_state is present
   ansible.builtin.fail:
     msg: The parameter 'docker_compose_files' is required when 'docker_compose_state' is 'present'
   when:
     - docker_compose_state == 'present'
-    - docker_compose_files | default([]) | length > 0
+    - docker_compose_files is not defined
 
 - name: Deploy Docker Compose project
   when: docker_compose_state == 'present'
