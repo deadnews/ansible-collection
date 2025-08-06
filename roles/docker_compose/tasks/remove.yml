@@ -15,11 +15,11 @@
         pull: never
         recreate: never
         state: absent
-      register: docker_compose_compose_down
+      register: docker_compose_down_output
 
     - name: Show results for docker compose down
       ansible.builtin.debug:
-        var: docker_compose_compose_down.stderr
+        var: docker_compose_down_output.stderr
 
     - name: Remove the Docker Compose project
       ansible.builtin.file:

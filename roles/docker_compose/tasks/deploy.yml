@@ -83,11 +83,11 @@
     pull: never
     recreate: auto
     state: present
-  register: docker_compose_compose_up
+  register: docker_compose_up_output
 
 - name: Show results for docker compose up ー {{ docker_compose_project }}
   ansible.builtin.debug:
-    var: docker_compose_compose_up.stderr
+    var: docker_compose_up_output.stderr
 
 - name: Sleep for a specified time
   when: docker_compose_sleep_time | default(0) | int > 0
@@ -102,11 +102,11 @@
         cmd: docker compose logs
         chdir: "{{ docker_compose_target_dir }}/{{ docker_compose_project }}"
       changed_when: false
-      register: docker_compose_compose_logs
+      register: docker_compose_logs_output
 
     - name: Show Docker compose logs
       ansible.builtin.debug:
-        var: docker_compose_compose_logs.stdout
+        var: docker_compose_logs_output.stdout
 
 - name: Execute command in running Docker containers
   when: docker_compose_containers_exec | default([]) | length > 0
