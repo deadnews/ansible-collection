@@ -3,11 +3,9 @@
 
 - name: Check distribution compatibility
   ansible.builtin.assert:
-    that:
-      - ansible_os_family is defined
-      - >
-        ansible_os_family == 'Debian' or
-        ansible_os_family == 'Archlinux'
+    that: >
+      ansible_os_family == 'Debian' or
+      ansible_os_family == 'Archlinux'
 
 - name: Install Wireguard — Debian
   when: ansible_os_family == 'Debian'
@@ -32,15 +30,13 @@
   notify: (Handler) Restart Wireguard service
 
 - name: Enable and persist ip forwarding
+  when: wireguard_ip_forward | default(false)
   ansible.posix.sysctl:
     name: net.ipv4.ip_forward
     value: "1"
     state: present
     sysctl_set: true
     reload: true
-  when:
-    - wireguard_ip_forward is defined
-    - wireguard_ip_forward
 
 - name: Flush handlers after deployment
   ansible.builtin.meta: flush_handlers
@@ -60,9 +56,7 @@
   until: wireguard_service.status.ActiveState == 'active'
 
 - name: Display debug information
+  when: wireguard_debug | default(false)
   ansible.builtin.include_role:
     name: deadnews.util.wireguard
     tasks_from: debug
-  when:
-    - wireguard_debug is defined
-    - wireguard_debug

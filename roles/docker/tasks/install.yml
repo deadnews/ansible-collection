@@ -48,10 +48,8 @@
     allow_change_held_packages: true
 
 - name: Hold Docker packages
+  when: docker_hold_packages | default(false)
   ansible.builtin.dpkg_selections:
     name: "{{ item }}"
     selection: hold
   with_items: "{{ docker_pkgs }}"
-  when:
-    - docker_hold_packages is defined
-    - docker_hold_packages

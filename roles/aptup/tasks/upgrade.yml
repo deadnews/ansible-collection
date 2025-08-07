@@ -28,8 +28,6 @@
     NEEDRESTART_MODE: "{{ 'a' if aptup_restart_services else 'l' }}"
 
 - name: Show dist-upgrade result
+  when: aptup_show_stdout | default(false)
   ansible.builtin.debug:
     var: aptup_dist.stdout
-  when:
-    - aptup_show_stdout is defined
-    - aptup_show_stdout
