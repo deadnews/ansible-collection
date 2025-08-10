@@ -17,7 +17,16 @@
   ansible.builtin.replace:
     path: /etc/apt/sources.list
     regexp: bullseye
-    replace: bookworm
+    replace:
+
+- name: Replace the codename — Debian 12 to 13
+  when:
+    - ansible_distribution == 'Debian'
+    - ansible_lsb.major_release | int == 12
+  ansible.builtin.replace:
+    path: /etc/apt/sources.list
+    regexp: bookworm
+    replace: trixie
 
 - name: Replace the codename — Ubuntu 18 to 20
   when:

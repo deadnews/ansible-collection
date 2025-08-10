@@ -1,7 +1,7 @@
 ---
 argument_specs:
   main:
-    short_description: The main entry point for the docker_compose role.
+    short_description: Deploy Docker Compose project.
     options:
       docker_compose_state:
         type: str

@@ -8,4 +8,5 @@
 - hosts: servers
   roles:
     - role: deadnews.util.reboot
+      reboot_force: false
 ```

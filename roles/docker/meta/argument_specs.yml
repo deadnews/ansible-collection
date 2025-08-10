@@ -1,7 +1,7 @@
 ---
 argument_specs:
   main:
-    short_description: The main entry point for the docker role.
+    short_description: Install Docker on Debian-family OS.
     options:
       docker_config:
         type: str

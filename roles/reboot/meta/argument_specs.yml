@@ -1,0 +1,7 @@
+---
+argument_specs:
+  main:
+    options:
+      reboot_force:
+        type: bool
+        description: Force reboot even if not required.

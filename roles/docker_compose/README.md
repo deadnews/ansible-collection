@@ -1,6 +1,6 @@
 # deadnews.util.docker_compose
 
-> Deploy Docker Compose projects (with docker compose v2)
+> Deploy Docker Compose project
 
 ## Role Variables
 

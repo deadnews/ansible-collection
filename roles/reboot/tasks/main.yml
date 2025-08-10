@@ -8,7 +8,7 @@
   register: reboot_required
 
 - name: Restart machine and Waiting for it to come back
-  when: reboot_required.stat.exists
+  when: reboot_required.stat.exists or reboot_force | default(false)
   block:
     - name: Restart machine
       ansible.builtin.reboot:
