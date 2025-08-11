@@ -19,7 +19,7 @@
     NEEDRESTART_MODE: "{{ 'a' if aptup_restart_services else 'l' }}"
 
 - name: Show full-upgrade result
-  when: aptup_show_stdout | default(false)
+  when: aptup_show_stdout | default(false) | bool
   ansible.builtin.debug:
     var: aptup_full.stdout
 
@@ -30,7 +30,7 @@
   ansible.builtin.setup:
 
 - name: Make sure that the GRUB is updated
-  when: aptup_next_release_update_grub | default(false)
+  when: aptup_next_release_update_grub | default(false) | bool
   changed_when: true
   ansible.builtin.command:
     cmd: update-grub

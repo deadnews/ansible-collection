@@ -30,7 +30,7 @@
   notify: (Handler) Restart Wireguard service
 
 - name: Enable and persist ip forwarding
-  when: wireguard_ip_forward | default(false)
+  when: wireguard_ip_forward | default(false) | bool
   ansible.posix.sysctl:
     name: net.ipv4.ip_forward
     value: "1"
@@ -56,7 +56,7 @@
   until: wireguard_service.status.ActiveState == 'active'
 
 - name: Display debug information
-  when: wireguard_debug | default(false)
+  when: wireguard_debug | default(false) | bool
   ansible.builtin.include_role:
     name: deadnews.util.wireguard
     tasks_from: debug

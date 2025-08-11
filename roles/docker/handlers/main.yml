@@ -6,12 +6,12 @@
   ansible.builtin.systemd:
     name: docker.service
     state: restarted
-    daemon_reload: "{{ true if docker_config_systemd | default(false) else false }}"
+    daemon_reload: "{{ docker_config_systemd | default('') | length > 0 }}"
     scope: user
 
 - name: (Handler) Restart system docker.service
   ansible.builtin.systemd:
     name: docker.service
     state: restarted
-    daemon_reload: "{{ true if docker_config_systemd | default(false) else false }}"
+    daemon_reload: "{{ docker_config_systemd | default('') | length > 0 }}"
     scope: system

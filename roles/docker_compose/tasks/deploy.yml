@@ -42,7 +42,7 @@
       register: docker_compose_config_output
 
     - name: Show files in the Docker Compose project {{ docker_compose_project }}
-      when: docker_compose_files_show | default(false)
+      when: docker_compose_files_show | default(false) | bool
       block:
         - name: Show the Docker Compose project in canonical format
           ansible.builtin.debug:
@@ -95,7 +95,7 @@
     timeout: "{{ docker_compose_sleep_time }}"
 
 - name: Show Docker Compose logs
-  when: docker_compose_logs | default(false)
+  when: docker_compose_logs | default(false) | bool
   block:
     - name: Get Docker Compose logs
       ansible.builtin.command:

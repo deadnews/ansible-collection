@@ -65,7 +65,7 @@
         - not docker_config_daemon.endswith('.j2')
 
 - name: Create the Docker systemd service config
-  when: docker_config_systemd | default(false)
+  when: docker_config_systemd | default(false) | bool
   block:
     - name: Set the Docker systemd service config directory
       ansible.builtin.set_fact:

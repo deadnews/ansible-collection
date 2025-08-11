@@ -11,7 +11,7 @@
     state: present
 
 - name: Add rootless user
-  when: docker_rootless_create_user_and_group | default(false)
+  when: docker_rootless_create_user_and_group | default(false) | bool
   block:
     - name: Add group {{ docker_rootless_group }}
       ansible.builtin.group:
@@ -78,7 +78,7 @@
         creates: "{{ docker_rootless_user_home }}/.docker/config.json"
 
 - name: Expose privileged ports (< 1024) on rootlesskit binary
-  when: docker_rootless_expose_privileged_ports | default(false)
+  when: docker_rootless_expose_privileged_ports | default(false) | bool
   community.general.capabilities:
     path: /usr/bin/rootlesskit
     capability: cap_net_bind_service=ep

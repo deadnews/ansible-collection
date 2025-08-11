@@ -4,4 +4,5 @@ argument_specs:
     options:
       reboot_force:
         type: bool
+        required: false
         description: Force reboot even if not required.
