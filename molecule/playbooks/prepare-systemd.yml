@@ -7,6 +7,7 @@
       when: ansible_os_family == "Debian"
       ansible.builtin.apt:
         update_cache: true
+      changed_when: false
 
     - name: Install systemd
       when: ansible_os_family == "Debian"

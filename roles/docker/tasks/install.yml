@@ -40,11 +40,24 @@
       - docker-ce-rootless-extras
       - docker-compose-plugin
 
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: true
+  changed_when: false
+
+- name: Get upgradable docker packages
+  ansible.builtin.command: apt list --upgradable {{ docker_pkgs | join(' ') }}
+  changed_when: false
+  register: docker_upgradable
+
+- name: Print upgradable docker packages
+  ansible.builtin.debug:
+    var: docker_upgradable.stdout_lines
+
 - name: Install Docker packages
   ansible.builtin.apt:
     name: "{{ docker_pkgs }}"
     state: latest
-    update_cache: true
     allow_change_held_packages: true
 
 - name: Hold Docker packages
