@@ -86,20 +86,14 @@ argument_specs:
             required: true
             description: The command to execute in the container.
 
-      docker_compose_containers_logs:
-        type: list
-        elements: str
-        required: false
-        description: A list of container names to show logs for after the Docker Compose project is deployed.
-
       docker_compose_containers_check:
-        type: list
-        elements: str
+        type: bool
         required: false
+        default: true
         description: |
-          A list of container names to assert are running after the Docker Compose project is deployed.
+          Whether check all containers for running state and health.
           If containers health checks are defined, they will be used to determine if the container is healthy.
-          Also used to image version inspection before and after pulling containers.
+          Also used for image version inspection before and after pulling containers.
 
       docker_compose_containers_check_retries:
         type: int

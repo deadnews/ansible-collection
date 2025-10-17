@@ -97,7 +97,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        molecule-distro: [debian12]
+        molecule-distro: [debian13]
         molecule-discover: ${{ fromJSON(needs.changes.outputs.discover) }}
     runs-on: ubuntu-latest
     steps:
