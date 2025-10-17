@@ -1,10 +1,19 @@
 # Changelog
 
-## [unreleased]
+## [1.9.0](https://github.com/deadnews/ansible-collection/compare/v1.8.2...v1.9.0) - 2025-10-17
+
+### Features
+
+- _(docker_compose)_ refine container checks ([#114](https://github.com/deadnews/ansible-collection/issues/114)) - ([434d8b9](https://github.com/deadnews/ansible-collection/commit/434d8b9cfaaa7ccf524979878d2ee16b5e91e07f))
 
 ### Bug fixes
 
+- _(docker)_ add steps to show upgradable docker packages - ([a1e05fa](https://github.com/deadnews/ansible-collection/commit/a1e05fa9372d2270eaff081852a7979797c17125))
 - improve condition checks across multiple roles - ([f1cc91d](https://github.com/deadnews/ansible-collection/commit/f1cc91d90712be83c2f5e02e4bb22c3a71765900))
+
+### Chores
+
+- _(git-cliff)_ update config - ([26af46a](https://github.com/deadnews/ansible-collection/commit/26af46a12a8986a28f4503c8260d9d9f24dd7491))
 
 ## [1.8.2](https://github.com/deadnews/ansible-collection/compare/v1.8.1...v1.8.2) - 2025-08-10
 
@@ -205,7 +214,7 @@
 
 - update dependency ansible-core to v2.16.6 ([#6](https://github.com/deadnews/ansible-collection/issues/6)) - ([c5a66a7](https://github.com/deadnews/ansible-collection/commit/c5a66a7a48407ba844a7a1ae80ed0abb6cef2069))
 
-## [1.0.0](https://github.com/deadnews/ansible-collection/commit/v1.0.0) - 2024-04-03
+## [1.0.0](https://github.com/deadnews/ansible-collection/commits/v1.0.0) - 2024-04-03
 
 ### Features
 
