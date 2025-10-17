@@ -5,7 +5,7 @@ driver:
     name: virtualbox
 
 platforms:
-  - name: debian12
+  - name: debian13
     box: debian/bookworm64
     config_options:
       vm.boot_timeout: 600

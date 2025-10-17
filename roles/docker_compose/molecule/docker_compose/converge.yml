@@ -28,13 +28,12 @@
         docker_compose_files_show: true
         docker_compose_sleep_time: 1
         docker_compose_logs: true
+        docker_compose_containers_check: true
         docker_compose_containers_exec:
           - container: docker-app
             cmd: ls -lha /
           - container: docker-app
             cmd: echo "Hello, World!"
-        docker_compose_containers_logs: [docker-app]
-        docker_compose_containers_check: [docker-app]
 
     - name: Verify that Docker App is responding
       ansible.builtin.uri:

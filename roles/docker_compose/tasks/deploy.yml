@@ -37,7 +37,8 @@
 
     - name: Validate the Docker Compose project {{ docker_compose_project }}
       ansible.builtin.command:
-        cmd: docker compose -f "{{ docker_compose_target_dir }}/{{ docker_compose_project }}/docker-compose.yml" config
+        cmd: docker compose config
+        chdir: "{{ docker_compose_target_dir }}/{{ docker_compose_project }}"
       changed_when: false
       register: docker_compose_config_output
 
@@ -58,11 +59,32 @@
           ansible.builtin.debug:
             var: docker_compose_ls_output.stdout
 
+- name: Get container names
+  when: docker_compose_containers_check | default(true) | bool
+  block:
+    - name: Get Docker Compose configuration
+      ansible.builtin.command:
+        cmd: docker compose config --format json
+        chdir: "{{ docker_compose_target_dir }}/{{ docker_compose_project }}"
+      changed_when: false
+      register: docker_compose_config_json
+
+    - name: Parse configuration and get container names
+      ansible.builtin.set_fact:
+        docker_compose_container_names: >-
+          {{
+            (docker_compose_config_json.stdout | from_json).services
+            | dict2items
+            | map(attribute='value.container_name')
+            | select('defined')
+            | list
+          }}
+
 - name: Inspect images for containers before pull
-  when: docker_compose_containers_check | default([]) | length > 0
+  when: docker_compose_container_names | default([]) | length > 0
   ansible.builtin.command:
     cmd: docker inspect -f {%raw%}'{{.Config.Image}}'{%endraw%} {{ item }}
-  loop: "{{ docker_compose_containers_check }}"
+  loop: "{{ docker_compose_container_names }}"
   register: docker_compose_images_before
   changed_when: false
   failed_when: false
@@ -129,27 +151,8 @@
       loop_control:
         label: "{{ item.item.container }} - {{ item.item.cmd }}"
 
-- name: Show Docker containers logs
-  when: docker_compose_containers_logs | default([]) | length > 0
-  block:
-    - name: Get Docker containers logs
-      ansible.builtin.command:
-        cmd: docker logs {{ item }}
-      changed_when: false
-      register: docker_compose_containers_logs_output
-      loop: "{{ docker_compose_containers_logs }}"
-
-    - name: Show Docker containers logs ー {{ docker_compose_project }}
-      ansible.builtin.debug:
-        msg:
-          stderr: "{{ item.stderr }}"
-          stdout: "{{ item.stdout }}"
-      loop: "{{ docker_compose_containers_logs_output.results }}"
-      loop_control:
-        label: "{{ item.item }}"
-
 - name: Ensure that Docker containers are running and healthy
-  when: docker_compose_containers_check | default([]) | length > 0
+  when: docker_compose_container_names | default([]) | length > 0
   block:
     - name: Ensure that Docker container is running ー {{ docker_compose_project }}
       ansible.builtin.command:
@@ -159,7 +162,7 @@
       retries: 12
       delay: 5
       until: docker_compose_running_verify.stdout == 'true'
-      loop: "{{ docker_compose_containers_check }}"
+      loop: "{{ docker_compose_container_names }}"
 
     - name: Ensure that Docker container is healthy ー {{ docker_compose_project }}
       ansible.builtin.command:
@@ -171,7 +174,7 @@
       until: >-
         docker_compose_healthy_verify.stdout == 'healthy' or
         docker_compose_healthy_verify.stdout == 'no health check'
-      loop: "{{ docker_compose_containers_check }}"
+      loop: "{{ docker_compose_container_names }}"
 
     - name: Show container health status ー {{ docker_compose_project }}
       ansible.builtin.debug:
@@ -180,13 +183,39 @@
       loop_control:
         label: "{{ item.item }}"
 
+- name: Check containers volumes ー {{ docker_compose_project }}
+  when: docker_compose_container_names | default([]) | length > 0
+  block:
+    - name: Inspect volumes for containers
+      ansible.builtin.command:
+        cmd: docker inspect -f {%raw%}'{{json .Mounts}}'{%endraw%} {{ item }}
+      loop: "{{ docker_compose_container_names }}"
+      register: docker_compose_mounts_inspect
+      changed_when: false
+      failed_when: false
+
+    - name: Show volumes for containers
+      ansible.builtin.debug:
+        msg: |
+          {% for idx in range(docker_compose_container_names | length) %}
+          {% set mounts = docker_compose_mounts_inspect.results[idx].stdout | default('[]') | from_json %}
+          {% set vols = mounts | selectattr('Type', 'equalto', 'volume') | list %}
+          {% if vols | length > 0 %}
+          Container: {{ docker_compose_container_names[idx] }}
+          {% for v in vols %}
+          Volume:    {{ v.Name | default('') }}	→ {{ v.Destination | default('') }}
+          {% endfor %}
+          ---
+          {% endif %}
+          {% endfor %}
+
 - name: Inspect images for containers after pull
-  when: docker_compose_containers_check | default([]) | length > 0
+  when: docker_compose_container_names | default([]) | length > 0
   block:
     - name: Inspect images for containers after pull
       ansible.builtin.command:
         cmd: docker inspect -f {%raw%}'{{.Config.Image}}'{%endraw%} {{ item }}
-      loop: "{{ docker_compose_containers_check }}"
+      loop: "{{ docker_compose_container_names }}"
       register: docker_compose_images_after
       changed_when: false
 
@@ -203,8 +232,8 @@
       changed_when: docker_compose_image_changed
       ansible.builtin.debug:
         msg: |
-          {% for idx in range(docker_compose_containers_check | length) %}
-          Container: {{ docker_compose_containers_check[idx] }}
+          {% for idx in range(docker_compose_container_names | length) %}
+          Container: {{ docker_compose_container_names[idx] }}
           Old Image: {{ docker_compose_images_before.results[idx].stdout if docker_compose_images_before.results[idx].rc == 0 else 'None' }}
           New Image: {{ docker_compose_images_after.results[idx].stdout }}
           ---
