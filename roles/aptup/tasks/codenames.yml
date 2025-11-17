@@ -3,8 +3,8 @@
 
 - name: Replace the codename — Debian 10 to 11
   when:
-    - ansible_distribution == 'Debian'
-    - ansible_lsb.major_release | int == 10
+    - ansible_facts.distribution == 'Debian'
+    - ansible_facts.lsb.major_release | int == 10
   ansible.builtin.replace:
     path: /etc/apt/sources.list
     regexp: buster
@@ -12,8 +12,8 @@
 
 - name: Replace the codename — Debian 11 to 12
   when:
-    - ansible_distribution == 'Debian'
-    - ansible_lsb.major_release | int == 11
+    - ansible_facts.distribution == 'Debian'
+    - ansible_facts.lsb.major_release | int == 11
   ansible.builtin.replace:
     path: /etc/apt/sources.list
     regexp: bullseye
@@ -21,8 +21,8 @@
 
 - name: Replace the codename — Debian 12 to 13
   when:
-    - ansible_distribution == 'Debian'
-    - ansible_lsb.major_release | int == 12
+    - ansible_facts.distribution == 'Debian'
+    - ansible_facts.lsb.major_release | int == 12
   ansible.builtin.replace:
     path: /etc/apt/sources.list
     regexp: bookworm
@@ -30,8 +30,8 @@
 
 - name: Replace the codename — Ubuntu 18 to 20
   when:
-    - ansible_distribution == 'Ubuntu'
-    - ansible_lsb.major_release | int == 18
+    - ansible_facts.distribution == 'Ubuntu'
+    - ansible_facts.lsb.major_release | int == 18
   ansible.builtin.replace:
     path: /etc/apt/sources.list
     regexp: bionic
@@ -39,8 +39,8 @@
 
 - name: Replace the codename — Ubuntu 20 to 22
   when:
-    - ansible_distribution == 'Ubuntu'
-    - ansible_lsb.major_release | int == 20
+    - ansible_facts.distribution == 'Ubuntu'
+    - ansible_facts.lsb.major_release | int == 20
   ansible.builtin.replace:
     path: /etc/apt/sources.list
     regexp: focal
@@ -48,8 +48,8 @@
 
 - name: Replace the codename — Ubuntu 22 to 24
   when:
-    - ansible_distribution == 'Ubuntu'
-    - ansible_lsb.major_release | int == 22
+    - ansible_facts.distribution == 'Ubuntu'
+    - ansible_facts.lsb.major_release | int == 22
   ansible.builtin.replace:
     path: /etc/apt/sources.list
     regexp: jammy

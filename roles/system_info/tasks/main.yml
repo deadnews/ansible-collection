@@ -4,17 +4,17 @@
 - name: Show system info (can be cached)
   ansible.builtin.debug:
     msg: |
-      Hostname: {{ ansible_hostname }}
-      System:   {{ ansible_distribution }} {{ ansible_distribution_version }} {{ ansible_distribution_release }}
-      Kernel:   {{ ansible_kernel }}
-      Python:   {{ ansible_python_version }}
-      Product:  {{ ansible_product_name }}
-      CPUs:     {{ ansible_processor_count }} × {{ ansible_processor[2] }}
-      Cores:    {{ ansible_processor_nproc }} cores, {{ ansible_processor_nproc * ansible_processor_threads_per_core }} threads
-      Memory:   {{ (ansible_memtotal_mb / 1024) | round(2) }} GiB
+      Hostname: {{ ansible_facts.hostname }}
+      System:   {{ ansible_facts.distribution }} {{ ansible_facts.distribution_version }} {{ ansible_facts.distribution_release }}
+      Kernel:   {{ ansible_facts.kernel }}
+      Python:   {{ ansible_facts.python_version }}
+      Product:  {{ ansible_facts.product_name }}
+      CPUs:     {{ ansible_facts.processor_count }} × {{ ansible_facts.processor[2] }}
+      Cores:    {{ ansible_facts.processor_nproc }} cores, {{ ansible_facts.processor_nproc * ansible_facts.processor_threads_per_core }} threads
+      Memory:   {{ (ansible_facts.memtotal_mb / 1024) | round(2) }} GiB
       Uptime:   {{
-        (ansible_uptime_seconds // 86400) | string + 'd ' +
-        ((ansible_uptime_seconds // 3600) % 24) | string + 'h ' +
-        ((ansible_uptime_seconds // 60) % 60) | string + 'm ' +
-        (ansible_uptime_seconds % 60) | string + 's'
+        (ansible_facts.uptime_seconds // 86400) | string + 'd ' +
+        ((ansible_facts.uptime_seconds // 3600) % 24) | string + 'h ' +
+        ((ansible_facts.uptime_seconds // 60) % 60) | string + 'm ' +
+        (ansible_facts.uptime_seconds % 60) | string + 's'
       }}

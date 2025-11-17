@@ -11,40 +11,36 @@
   when: docker_compose_files | default([]) | length > 0
   block:
     - name: Template files in the Docker Compose project {{ docker_compose_project }}
+      loop: "{{ docker_compose_files }}"
+      when: item.src.endswith('.j2')
       ansible.builtin.template:
         src: "{{ item.src }}"
         dest: "{{ docker_compose_target_dir }}/{{ docker_compose_project }}/{{ item.dest | default(item.src | basename | split('.j2') | first) }}"
         mode: "{{ item.mode | default('0644') }}"
         validate: "{{ item.validate | default('') }}"
-      loop: "{{ docker_compose_files }}"
-      notify:
-        - (Handler) Down the Docker Compose project containers
-      when:
-        - item.src.endswith('.j2')
+      notify: (Handler) Down the Docker Compose project containers
 
     - name: Copy files in the Docker Compose project {{ docker_compose_project }}
+      loop: "{{ docker_compose_files }}"
+      when: not item.src.endswith('.j2')
       ansible.builtin.copy:
         src: "{{ item.src }}"
         dest: "{{ docker_compose_target_dir }}/{{ docker_compose_project }}/{{ item.dest | default(item.src | basename) }}"
         mode: "{{ item.mode | default('0644') }}"
         directory_mode: "{{ item.directory_mode | default('0755') }}"
         validate: "{{ item.validate | default('') }}"
-      loop: "{{ docker_compose_files }}"
-      notify:
-        - (Handler) Down the Docker Compose project containers
-      when:
-        - not item.src.endswith('.j2')
-
-    - name: Validate the Docker Compose project {{ docker_compose_project }}
-      ansible.builtin.command:
-        cmd: docker compose config
-        chdir: "{{ docker_compose_target_dir }}/{{ docker_compose_project }}"
-      changed_when: false
-      register: docker_compose_config_output
+      notify: (Handler) Down the Docker Compose project containers
 
     - name: Show files in the Docker Compose project {{ docker_compose_project }}
       when: docker_compose_files_show | default(false) | bool
       block:
+        - name: Validate the Docker Compose project {{ docker_compose_project }}
+          ansible.builtin.command:
+            cmd: docker compose config
+            chdir: "{{ docker_compose_target_dir }}/{{ docker_compose_project }}"
+          changed_when: false
+          register: docker_compose_config_output
+
         - name: Show the Docker Compose project in canonical format
           ansible.builtin.debug:
             var: docker_compose_config_output.stdout
@@ -78,6 +74,7 @@
             | map(attribute='value.container_name')
             | select('defined')
             | list
+            | sort
           }}
 
 - name: Inspect images for containers before pull

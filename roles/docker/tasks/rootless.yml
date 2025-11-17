@@ -39,8 +39,9 @@
 - name: Assign a subordinate IDs range
   ansible.builtin.lineinfile:
     path: "{{ item }}"
+    regexp: "^{{ docker_rootless_user | regex_escape }}:"
     line: "{{ docker_rootless_user }}:231072:65536"
-  with_items:
+  loop:
     - /etc/subuid
     - /etc/subgid
 
@@ -86,6 +87,29 @@
   notify:
     - (Handler) Restart rootless docker.service
 
+- name: Allow delegation of controllers for rootless user
+  block:
+    - name: Create drop-in directory for rootless user
+      ansible.builtin.file:
+        path: /etc/systemd/system/user@{{ docker_rootless_uid }}.service.d
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Allow delegation of controllers for rootless user
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/user@{{ docker_rootless_uid }}.service.d/delegate.conf
+        content: |
+          [Service]
+          Delegate=cpu memory pids io
+        owner: root
+        group: root
+        mode: "0644"
+      notify:
+        - (Handler) Restart rootless user manager
+        - (Handler) Restart rootless docker.service
+
 - name: Create Docker configs and Verify that Docker daemon is responding
   become: true
   become_user: "{{ docker_rootless_user }}"
@@ -101,12 +125,10 @@
 
     - name: Ensure that Docker service is started and enabled
       ansible.builtin.systemd:
-        name: "{{ item }}"
+        name: docker.service
         state: started
         enabled: true
         scope: user
-      loop:
-        - docker.service
 
     - name: Verify that Docker daemon is responding
       ansible.builtin.command:
