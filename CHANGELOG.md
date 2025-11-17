@@ -1,10 +1,10 @@
 # Changelog
 
-## [1.9.1-alpha.0](https://github.com/deadnews/ansible-collection/compare/v1.9.0...v1.9.1-alpha.0) - 2025-11-17
+## [1.10.0](https://github.com/deadnews/ansible-collection/compare/v1.9.0...v1.10.0) - 2025-11-17
 
-### Testing
+### Features
 
-- _(docker)_ adapt for `docker 29` - ([c28de22](https://github.com/deadnews/ansible-collection/commit/c28de223575deda3502ac6814a1d7850174b369d))
+- _(docker)_ allow read `io` stats for `rootless` user ([#117](https://github.com/deadnews/ansible-collection/issues/117)) - ([6565156](https://github.com/deadnews/ansible-collection/commit/656515657ea79d845670d65384cea1945e2b2309))
 
 ## [1.9.0](https://github.com/deadnews/ansible-collection/compare/v1.8.2...v1.9.0) - 2025-10-17
 
