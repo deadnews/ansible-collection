@@ -11,6 +11,8 @@
     - name: Install Docker
       ansible.builtin.import_role:
         name: deadnews.util.docker
+      vars:
+        docker_config_daemon: files/daemon.json
 
     - name: Deploy Docker App
       ansible.builtin.import_role:
