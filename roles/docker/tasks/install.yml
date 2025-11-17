@@ -13,9 +13,9 @@
     name: docker
     types: [deb]
     architectures: amd64
-    uris: https://download.docker.com/linux/{{ ansible_distribution | lower }}
-    signed_by: https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg
-    suites: ["{{ ansible_distribution_release | lower }}"]
+    uris: https://download.docker.com/linux/{{ ansible_facts.distribution | lower }}
+    signed_by: https://download.docker.com/linux/{{ ansible_facts.distribution | lower }}/gpg
+    suites: ["{{ ansible_facts.distribution_release | lower }}"]
     components: [stable]
     state: present
 
@@ -65,4 +65,4 @@
   ansible.builtin.dpkg_selections:
     name: "{{ item }}"
     selection: hold
-  with_items: "{{ docker_pkgs }}"
+  loop: "{{ docker_pkgs }}"

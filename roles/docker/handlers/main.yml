@@ -1,4 +1,11 @@
 ---
+- name: (Handler) Restart rootless user manager
+  ansible.builtin.systemd:
+    name: user@{{ docker_rootless_uid }}.service
+    state: restarted
+    daemon_reload: true
+    scope: system
+
 - name: (Handler) Restart rootless docker.service
   become: true
   become_user: "{{ docker_rootless_user }}"
@@ -6,12 +13,12 @@
   ansible.builtin.systemd:
     name: docker.service
     state: restarted
-    daemon_reload: "{{ docker_config_systemd | default('') | length > 0 }}"
+    daemon_reload: true
     scope: user
 
 - name: (Handler) Restart system docker.service
   ansible.builtin.systemd:
     name: docker.service
     state: restarted
-    daemon_reload: "{{ docker_config_systemd | default('') | length > 0 }}"
+    daemon_reload: true
     scope: system

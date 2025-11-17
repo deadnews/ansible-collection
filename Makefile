@@ -6,11 +6,10 @@ install:
 	uv sync
 	uv run ansible-galaxy install -r requirements.yml
 
-update: up up-galaxy
-up:
+update:
 	uv sync --upgrade
-up-galaxy:
 	uv run galaxy-update requirements.yml
+	prek auto-update
 
 check: pc lint-py
 pc:
