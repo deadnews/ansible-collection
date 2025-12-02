@@ -40,7 +40,7 @@
     - name: Verify that Docker App is responding
       ansible.builtin.uri:
         url: http://127.0.0.1:8000/health
-      register: docker_app_verify
+      register: docker_compose_verify
       retries: 12
       delay: 5
-      until: docker_app_verify is not failed
+      until: docker_compose_verify is not failed

@@ -6,9 +6,9 @@
     recreate: never
     remove_orphans: true
     state: absent
-  register: compose_down
+  register: docker_compose_down
   notify: (Handler) Show results for docker compose down
 
 - name: (Handler) Show results for docker compose down
   ansible.builtin.debug:
-    var: compose_down.stderr
+    var: docker_compose_down.stderr
