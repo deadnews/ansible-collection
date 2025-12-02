@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.1](https://github.com/deadnews/ansible-collection/compare/v1.10.0...v1.10.1) - 2025-12-02
+
+### Bug fixes
+
+- _(wireguard)_ ensure ip forwarding persistence after reboot - ([ad92421](https://github.com/deadnews/ansible-collection/commit/ad9242194ebc9c3c7f8106018e200a20b35fc914))
+- variables names - ([8fec8a3](https://github.com/deadnews/ansible-collection/commit/8fec8a3fde91eadfdfcb1058ff1c598727304eb9))
+
 ## [1.10.0](https://github.com/deadnews/ansible-collection/compare/v1.9.0...v1.10.0) - 2025-11-17
 
 ### Features
