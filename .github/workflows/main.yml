@@ -83,13 +83,15 @@ jobs:
       - name: Filter out `shared` group; If no changes detected, return `hello_world` scenario
         id: filter-edited
         run: |
-          JSON=$(echo '${{ steps.filter.outputs.changes }}' | jq -c 'map(select(. != "shared"))')
+          JSON=$(echo "${CHANGES}" | jq -c 'map(select(. != "shared"))')
 
           if [[ $JSON == '[]' ]]; then
               JSON='["plugins/tests/molecule/hello_world"]'
           fi
 
           echo "changes=$JSON" >> $GITHUB_OUTPUT
+        env:
+          CHANGES: ${{ steps.filter.outputs.changes }}
 
   test:
     name: Tests
@@ -123,9 +125,10 @@ jobs:
         run: uv run ansible-galaxy install -r requirements.yml
 
       - name: Run tests
-        run: make test DRIVER=docker DISCOVER=${{ matrix.molecule-discover }}
+        run: make test DRIVER=docker DISCOVER=${MOLECULE_DISCOVER}
         env:
           MOLECULE_DISTRO: ${{ matrix.molecule-distro }}
+          MOLECULE_DISCOVER: ${{ matrix.molecule-discover }}
 
   galaxy-deploy:
     name: Release to Ansible Galaxy
