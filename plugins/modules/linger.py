@@ -76,7 +76,7 @@ def main() -> None:
 
     loginctl = which("loginctl")
     if not loginctl:
-        module.fail_json(msg="loginctl is not found on the system.", **result)
+        module.fail_json(msg="loginctl is not found on the system.", exception=None, **result)
         return
 
     if state == "present":
