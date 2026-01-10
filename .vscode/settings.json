@@ -9,22 +9,24 @@
       "source.organizeImports": "explicit"
     },
     "editor.defaultFormatter": "charliermarsh.ruff",
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "editor.inlayHints.enabled": "offUnlessPressed" // toggled with Ctrl+Alt
   },
   "[toml]": {
     "editor.formatOnSave": true
   },
   "ansible.ansible.reuseTerminal": true,
   "files.associations": {
+    ".ansible-lint": "yaml",
     "**/handlers/*.yml": "ansible",
     "**/meta/*.yml": "ansible",
     "**/molecule/**/*.yml": "ansible",
     "**/playbooks/**/*.yml": "ansible",
     "**/roles/**/*.yml": "ansible",
     "**/tasks/**/*.yml": "ansible",
-    ".ansible-lint": "yaml",
     "ansible.cfg": "properties",
     "docker-compose.yml": "dockercompose"
   },
+  "python.languageServer": "None",
   "python.testing.pytestEnabled": true
 }

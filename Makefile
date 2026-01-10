@@ -1,4 +1,4 @@
-.PHONY: all clean default install lock update check pc lint test molecule
+.PHONY: all clean default install lock update up check pc lint test molecule
 
 default: check
 
@@ -6,10 +6,13 @@ install:
 	uv sync
 	uv run ansible-galaxy install -r requirements.yml
 
-update:
+update: up up-ci
+up:
 	uv sync --upgrade
 	uv run galaxy-update requirements.yml
+up-ci:
 	prek auto-update
+	pinact run -update
 
 check: pc lint-py
 pc:
@@ -17,7 +20,7 @@ pc:
 lint-py:
 	uv run ruff check .
 	uv run ruff format .
-	uv run mypy .
+	uv run ty check .
 
 lint:
 	uv run ansible-lint
