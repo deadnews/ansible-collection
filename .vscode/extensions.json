@@ -1,8 +1,8 @@
 {
   "recommendations": [
+    "astral-sh.ty",
     "charliermarsh.ruff",
     "esbenp.prettier-vscode",
-    "ms-python.mypy-type-checker",
     "ms-python.python",
     "redhat.ansible",
     "samuelcolvin.jinjahtml",

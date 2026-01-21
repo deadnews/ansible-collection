@@ -19,7 +19,7 @@
     components: [stable]
     state: present
 
-- name: Uninstall Distro maintaine distributions of Docker
+- name: Uninstall Distro maintained distributions of Docker
   ansible.builtin.apt:
     name:
       - docker.io
