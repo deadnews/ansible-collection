@@ -1,7 +1,7 @@
 ---
 # Install Docker
 
-- name: Ensure the `deb822_repository` and `community.docker` modules requirements is installed
+- name: Ensure the `deb822_repository` and `community.docker` modules requirements are installed
   ansible.builtin.apt:
     name:
       - python3-debian
@@ -29,16 +29,6 @@
       - containerd
     state: absent
     autoremove: false
-
-- name: Set Docker packages list
-  ansible.builtin.set_fact:
-    docker_pkgs:
-      - containerd.io
-      - docker-buildx-plugin
-      - docker-ce
-      - docker-ce-cli
-      - docker-ce-rootless-extras
-      - docker-compose-plugin
 
 - name: Update apt cache
   ansible.builtin.apt:

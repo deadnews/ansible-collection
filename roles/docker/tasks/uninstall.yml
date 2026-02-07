@@ -1,16 +1,6 @@
 ---
 # Uninstall Docker packages
 
-- name: Set Docker packages list
-  ansible.builtin.set_fact:
-    docker_pkgs:
-      - containerd.io
-      - docker-buildx-plugin
-      - docker-ce
-      - docker-ce-cli
-      - docker-ce-rootless-extras
-      - docker-compose-plugin
-
 - name: Uninstall and Purge Docker packages
   ansible.builtin.apt:
     name: "{{ docker_pkgs }}"
@@ -22,10 +12,4 @@
 - name: Remove Docker repository
   ansible.builtin.deb822_repository:
     name: docker
-    types: [deb]
-    architectures: amd64
-    uris: https://download.docker.com/linux/{{ ansible_facts.distribution | lower }}
-    signed_by: https://download.docker.com/linux/{{ ansible_facts.distribution | lower }}/gpg
-    suites: ["{{ ansible_facts.distribution_release | lower }}"]
-    components: [stable]
     state: absent
