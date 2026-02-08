@@ -1,5 +1,6 @@
 ---
 docker_cleanup_scheduled: false
+docker_cleanup_scheduled_until: 672h # 28 days
 docker_hold_packages: false
 docker_rootless_create_user_and_group: true
 docker_rootless_expose_privileged_ports: false
@@ -10,3 +11,10 @@ docker_rootless_user_home: /var/lib/{{ docker_rootless_user }}
 docker_rootless_user: rootless
 docker_rootless: false
 docker_state: present
+docker_pkgs:
+  - containerd.io
+  - docker-buildx-plugin
+  - docker-ce
+  - docker-ce-cli
+  - docker-ce-rootless-extras
+  - docker-compose-plugin
