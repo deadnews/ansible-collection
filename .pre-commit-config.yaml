@@ -25,23 +25,23 @@ repos:
       - id: prettier
 
   - repo: https://github.com/crate-ci/typos
-    rev: v1.44.0
+    rev: v1.45.0
     hooks:
       - id: typos
 
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.37.0
+    rev: 0.37.1
     hooks:
       - id: check-github-workflows
       - id: check-renovate
 
   - repo: https://github.com/rhysd/actionlint
-    rev: v1.7.11
+    rev: v1.7.12
     hooks:
       - id: actionlint
 
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
-    rev: v1.22.0
+    rev: v1.23.1
     hooks:
       - id: zizmor
         args: [--fix=safe]
@@ -52,12 +52,12 @@ repos:
       - id: taplo-format
 
   - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.30.0
+    rev: v8.30.1
     hooks:
       - id: gitleaks
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.5
+    rev: v0.15.9
     hooks:
       - id: ruff-format
       - id: ruff-check
@@ -69,7 +69,7 @@ repos:
       - id: j2lint
 
   - repo: https://github.com/ansible/ansible-lint
-    rev: v26.3.0
+    rev: v26.4.0
     hooks:
       - id: ansible-lint
         args: [--fix]
